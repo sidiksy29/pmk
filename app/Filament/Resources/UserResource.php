@@ -17,6 +17,7 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
 
+
 use function Laravel\Prompts\text;
 
 class UserResource extends Resource
@@ -40,11 +41,25 @@ class UserResource extends Resource
                 ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
                 ->required(fn () => request()->routeIs('Filament.Users.Create'))
                 ->nullable(fn () => !request()->routeIs('Filament.Users.Create')),
+
+            Select::make('role')
+                ->options([
+                    'Admin' => 'Admin',
+                    'Leader' => 'Leader',
+                    'Asst Manager' => 'Asst Manager',
+                    'HRD' => 'HRD',
+
+                ])
+                ->label('Jabatan')
+                ->required()
+                ->native(false),
+
             Select::make('roles')
                 ->relationship('roles', 'name')
                 ->multiple()
                 ->preload()
                 ->searchable(),
+
             ]);
     }
 
@@ -54,6 +69,7 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email'),
+                TextColumn::make('role')->label('Jabatan'),
 // Suggested code may be subject to a license. Learn more: ~LicenseLog:4030997248.
                 TextColumn::make('roles.name'),
                 TextColumn::make('created_at')->date(),

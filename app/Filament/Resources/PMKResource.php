@@ -12,11 +12,16 @@ use App\Policies\PMKPolicy;
 use App\Models\DataKaryawan;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Split;
 use function Laravel\Prompts\select;
-use Illuminate\Foundation\Auth\User;
 
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -24,7 +29,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\PMKResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PMKResource\RelationManagers;
-use Illuminate\Support\Facades\Auth;
+
+
 
 
 
@@ -38,66 +44,82 @@ class PMKResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('nik')
-                    ->label('NIK')
-                    ->options(DataKaryawan::pluck('nik', 'nik'))
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($set, $state) {
-                        $karyawan = DataKaryawan::where('nik', $state)->first();
-                        if ($karyawan) {
-                            $set('nama_lengkap', $karyawan->nama_lengkap);
-                            $set('departemen_id', $karyawan->departemen_id);
-                        }
-                    })
-                    ->searchable('nik')
-                    ->placeholder('Masukkan NIK'),
 
-                Textarea::make('nama_lengkap')
-                    ->label('Nama Lengkap')
-                    ->readOnly()
-                    ->disabled(),
+                Split::make([
+                    Section::make([
+                        Select::make('nik')
+                            ->label('NIK')
+                            ->options(DataKaryawan::pluck('nik', 'nik'))
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($set, $state) {
+                                $karyawan = DataKaryawan::where('nik', $state)->first();
+                                if ($karyawan) {
+                                    $set('nama_lengkap', $karyawan->nama_lengkap);
+                                    $set('departemen_id', $karyawan->departemen_id);
+                                }
+                            })
+                            ->searchable('nik')
+                            ->placeholder('Masukkan NIK'),
 
-                Textarea::make('departemen_id')
-                    ->label('Departemen')
-                    ->readOnly()
-                    ->disabled(),
+                        Textarea::make('nama_lengkap')
+                            ->label('Nama Lengkap')
+                            ->readOnly()
+                            ->disabled(),
 
-                Datepicker::make('tanggal')
-                    ->label('Tanggal')
-                    ->native(false)
-                    ->default(now())
-                    ->displayFormat('d/M/Y')
-                    ->required(),
+                        Textarea::make('departemen_id')
+                            ->label('Departemen')
+                            ->readOnly()
+                            ->disabled(),
 
 
-                TextInput::make('no_pmk')
-                    ->label('No PMK')
-                    ->required()
-                    ->placeholder('Masukkan No PMK'),
+                    ]),
+                    Section::make([
 
-                Select::make('mutasi')
-                    ->options([
-                        'Ijin Meninggalkan Pekerjaan' => 'Ijin Meninggalkan Pekerjaan',
-                        'Perubahan Status' => 'Perubahan Status',
-                        'Perubahan Jabatan' => 'Perubahan Jabatan',
-                        'Perubahan Gaji' => 'Perubahan Gaji',
-                        'Pengunduran Diri' => 'Pengunduran Diri',
-                        'Lain-lain' => 'Lain-lain',
-                    ])
-                    ->label('Mutasi')
-                    ->required()
-                    ->native(false),
+                        Datepicker::make('tanggal')
+                            ->label('Tanggal')
+                            ->native(false)
+                            ->default(now())
+                            ->displayFormat('d/M/Y')
+                            ->required(),
 
-                Textarea::make('uraian')
-                    ->label('Uraian')
-                    ->required()
-                    ->placeholder('Masukkan Uraian'),
 
-                Textarea::make('catatan')
-                    ->label('Catatan')
-                    ->required()
-                    ->placeholder('Masukkan Catatan'),
+                        TextInput::make('no_pmk')
+                            ->label('No PMK')
+                            ->required()
+                            ->placeholder('Masukkan No PMK'),
+
+                        Select::make('mutasi')
+                            ->options([
+                                'Ijin Meninggalkan Pekerjaan' => 'Ijin Meninggalkan Pekerjaan',
+                                'Perubahan Status' => 'Perubahan Status',
+                                'Perubahan Jabatan' => 'Perubahan Jabatan',
+                                'Perubahan Gaji' => 'Perubahan Gaji',
+                                'Pengunduran Diri' => 'Pengunduran Diri',
+                                'Lain-lain' => 'Lain-lain',
+                            ])
+                            ->label('Mutasi')
+                            ->required()
+                            ->native(false),
+
+                        Textarea::make('uraian')
+                            ->label('Uraian')
+                            ->required()
+                            ->placeholder('Masukkan Uraian'),
+
+                        Textarea::make('catatan')
+                            ->label('Catatan')
+                            ->required()
+                            ->placeholder('Masukkan Catatan'),
+
+
+
+
+                    ]),
+                ])->columnSpan(2),
+
+
+
 
 
 
@@ -180,6 +202,8 @@ class PMKResource extends Resource
                 })
                 // Tombol hanya akan muncul jika status masih pending
                 ->visible(fn (PMK $record) => $record->status === 'pending'),
+
+            ViewAction::make(),
 
             ])
             ->bulkActions([
