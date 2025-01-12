@@ -8,12 +8,13 @@ use Filament\Forms\Form;
 use app\Models\Departemen;
 use Filament\Tables\Table;
 use App\Models\DataKaryawan;
+use Illuminate\Validation\Rule;
 use Filament\Resources\Resource;
 use function Laravel\Prompts\text;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -25,6 +26,7 @@ class DataKaryawanResource extends Resource
     protected static ?string $model = DataKaryawan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Data Karyawan';
 
     public static function form(Form $form): Form
     {
@@ -33,7 +35,7 @@ class DataKaryawanResource extends Resource
                 TextInput::make('nik')
                     ->label('NIK')
                     ->required()
-                    ->unique()
+                    ->unique(DataKaryawan::class, 'nik', ignorable: fn ($record) => $record)
                     ->placeholder('Masukkan NIK'),
                 TextInput::make('nama_lengkap')
                     ->label('Nama Lengkap')

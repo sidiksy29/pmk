@@ -10,6 +10,8 @@ class ListPMKS extends ListRecords
 {
     protected static string $resource = PMKResource::class;
 
+    protected static ?string $title = 'PMK';
+
     protected function getHeaderActions(): array
     {
         return [

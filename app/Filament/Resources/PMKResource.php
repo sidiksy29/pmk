@@ -39,6 +39,7 @@ class PMKResource extends Resource
     protected static ?string $model = PMK::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'PMK';
 
     public static function form(Form $form): Form
     {

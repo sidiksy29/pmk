@@ -9,4 +9,12 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateDepartemen extends CreateRecord
 {
     protected static string $resource = DepartemenResource::class;
+
+    protected static ?string $title = 'Tambah Data Departemen';
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
 }

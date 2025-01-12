@@ -56,9 +56,14 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
             ])
+
+            ->brandName('PMK')
+
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+
     }
 }
 

@@ -23,6 +23,8 @@ class DepartemenResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationLabel = 'Departemen';
+
     public static function form(Form $form): Form
     {
         return $form
