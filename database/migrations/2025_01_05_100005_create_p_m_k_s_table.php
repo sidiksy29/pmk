@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('p_m_k_s', function (Blueprint $table) {
             $table->id();
             $table->string('nik')->constrained('data_karyawans', 'nik')->onDelete('cascade');
+            $table->string('nama_lengkap');
+            $table->string('departemen_id');
             $table->datetime('tanggal');
             $table->string('no_pmk');
             $table->string('mutasi');

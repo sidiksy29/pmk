@@ -8,6 +8,8 @@ class PMK extends Model
 {
     protected $fillable = [
         'nik',
+        'nama_lengkap',
+        'departemen_id',
         'tanggal',
         'no_pmk',
         'mutasi',
@@ -22,5 +24,10 @@ class PMK extends Model
     public function datakaryawan()
     {
         return $this->belongsTo(DataKaryawan::class, 'nik', 'nik');
+    }
+
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class);
     }
 }

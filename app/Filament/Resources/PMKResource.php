@@ -6,6 +6,7 @@ use App\Models\PMK;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
+use App\Models\Departemen;
 use Filament\Tables\Table;
 use App\Actions\ResetStars;
 use App\Policies\PMKPolicy;
@@ -13,8 +14,8 @@ use App\Models\DataKaryawan;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Split;
-use function Laravel\Prompts\select;
 
+use function Laravel\Prompts\select;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
@@ -55,9 +56,10 @@ class PMKResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function ($set, $state) {
                                 $karyawan = DataKaryawan::where('nik', $state)->first();
+                                $departemen = Departemen::where('id', $karyawan->departemen_id)->first();
                                 if ($karyawan) {
                                     $set('nama_lengkap', $karyawan->nama_lengkap);
-                                    $set('departemen_id', $karyawan->departemen_id);
+                                    $set('departemen_id', $departemen->nama);
                                 }
                             })
                             ->searchable('nik')
@@ -66,12 +68,12 @@ class PMKResource extends Resource
                         Textarea::make('nama_lengkap')
                             ->label('Nama Lengkap')
                             ->readOnly()
-                            ->disabled(),
+                            ->required(),
 
                         Textarea::make('departemen_id')
                             ->label('Departemen')
                             ->readOnly()
-                            ->disabled(),
+                            ->required(),
 
 
                     ]),
@@ -88,6 +90,7 @@ class PMKResource extends Resource
                         TextInput::make('no_pmk')
                             ->label('No PMK')
                             ->required()
+                            ->unique()
                             ->placeholder('Masukkan No PMK'),
 
                         Select::make('mutasi')
@@ -110,7 +113,6 @@ class PMKResource extends Resource
 
                         Textarea::make('catatan')
                             ->label('Catatan')
-                            ->required()
                             ->placeholder('Masukkan Catatan'),
 
 
@@ -214,6 +216,8 @@ class PMKResource extends Resource
             ]);
     }
 
+
+
     public static function getRelations(): array
     {
         return [
@@ -227,6 +231,7 @@ class PMKResource extends Resource
             'index' => Pages\ListPMKS::route('/'),
             'create' => Pages\CreatePMK::route('/create'),
             'edit' => Pages\EditPMK::route('/{record}/edit'),
+
         ];
     }
 }

@@ -14,4 +14,9 @@ class Departemen extends Model
     {
         return $this->hasMany(DataKaryawan::class);
     }
+
+    public function pmk()
+    {
+        return $this->hasMany(PMK::class);
+    }
 }
